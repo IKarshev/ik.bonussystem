@@ -7,6 +7,9 @@ use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
 use Bitrix\Main\IO\Directory;
 use Bitrix\Main\Config\Option;
+
+use Ik\BonusSystem\OrderPropertys;
+
 IncludeModuleLangFile(__FILE__);
 
 // Orm
@@ -21,16 +24,20 @@ Class Ik_Bonussystem extends CModule
     var $MODULE_DESCRIPTION;
     var $errors;
 
-    function __construct(){
+    function __construct()
+    {
         $this->MODULE_VERSION = "0.0.1";
         $this->MODULE_VERSION_DATE = "22.09.2024";
         $this->MODULE_NAME = "Бонусная система";
         $this->MODULE_DESCRIPTION = "Накопительная бонусная система";
         $this->PARTNER_NAME = "IvanKarshev";
 		$this->PARTNER_URI = "https://github.com/IKarshev";
+
+        $this->eventManager = EventManager::getInstance();
     }
 
-    function DoInstall(){
+    function DoInstall()
+    {
         global $APPLICATION;
 
         RegisterModule($this->MODULE_ID);
@@ -38,7 +45,7 @@ Class Ik_Bonussystem extends CModule
         $this->InstallDB();
         $this->InstallEvents();
         $this->InstallFiles();
-
+        $this->InstallPropertys();
 
         $APPLICATION->includeAdminFile(
             "Установочное сообщение",
@@ -47,12 +54,14 @@ Class Ik_Bonussystem extends CModule
         return true;
     }
 
-    function DoUninstall(){
+    function DoUninstall()
+    {
         global $APPLICATION;
 
         $this->UnInstallDB();
         $this->UnInstallEvents();
         $this->UnInstallFiles();
+        $this->UnInstallPropertys();
 
         UnRegisterModule($this->MODULE_ID);
         $APPLICATION->includeAdminFile(
@@ -62,7 +71,8 @@ Class Ik_Bonussystem extends CModule
         return true;
     }
 
-    function InstallDB(){
+    function InstallDB()
+    {
         Loader::includeModule($this->MODULE_ID);
 
         if (!Application::getConnection()->isTableExists(BonusTable::getTableName())) {
@@ -71,7 +81,8 @@ Class Ik_Bonussystem extends CModule
         return true;
     }
     
-    function UnInstallDB(){
+    function UnInstallDB()
+    {
         Loader::includeModule($this->MODULE_ID);
 
         if (Application::getConnection()->isTableExists(BonusTable::getTableName())) {
@@ -80,31 +91,46 @@ Class Ik_Bonussystem extends CModule
         return true;
     }
 
-    function InstallEvents(){
-        /*
-        EventManager::getInstance()->registerEventHandler(
-            'main',
-            'OnBuildGlobalMenu',
+    function InstallEvents()
+    {
+        $this->eventManager->registerEventHandler(
+            'sale',
+            'OnSalePayOrder',
             $this->MODULE_ID,
-            'ik\multiregional\EventHandler',
-            'OnBuildGlobalMenuHandler'
+            '\\Ik\\BonusSystem\\EventHandler',
+            'OnSalePayOrderHandler'
         );
-        */
     }
 
-    function UnInstallEvents(){
-        /*
-        EventManager::getInstance()->unRegisterEventHandler(
-            "main",
-            "OnBuildGlobalMenu",
+    function UnInstallEvents()
+    {
+        $this->eventManager->unRegisterEventHandler(
+            "sale",
+            "OnSalePayOrder",
             $this->MODULE_ID,
-            'ik\\multiregional\\EventHandler',
-            'OnBuildGlobalMenuHandler'
+            '\\Ik\\BonusSystem\\EventHandler',
+            'OnSalePayOrderHandler'
         );
-        */
     }
 
-    function InstallFiles(){
+    function InstallPropertys()
+    {
+        if( Loader::includeModule($this->MODULE_ID) ){
+            $properties = new OrderPropertys();
+            $properties->createPropertiesBonus();
+        }
+    }
+
+    function UnInstallPropertys()
+    {
+        if( Loader::includeModule($this->MODULE_ID) ){
+            $properties = new OrderPropertys();
+            $properties->deletePropertiesBonus();
+        }
+    }
+
+    function InstallFiles()
+    {
         /*
         CopyDirFiles(
             __DIR__ . '/admin/settings',
@@ -128,7 +154,8 @@ Class Ik_Bonussystem extends CModule
         return true;
     }
 
-    function UnInstallFiles(){
+    function UnInstallFiles()
+    {
         /*
         $DeleteAdminPath = [
             Application::getDocumentRoot() . '/bitrix/admin/multiregion_settings.php',

@@ -17,12 +17,13 @@ Class BonusTable extends Entity\DataManager
 	{
 		return 'BonusSystem';
 	}
+
 	public static function getMap()
 	{
 		return array(
-			new Entity\IntegerField('ID', array('primary'=>true,'autocomplete'=>true)),
+			new Entity\IntegerField('ID', ['primary'=>true,'autocomplete'=>true]),
 			new Entity\IntegerField('USER_ID'),
-			new Entity\FloatField('BONUS'),	
+			new Entity\FloatField('BONUS'),
 		);
 	}
 
@@ -32,7 +33,7 @@ Class BonusTable extends Entity\DataManager
      * 
      * @param float $Bonus — бонусы пользователя
      */
-    public static function getBonus(int $UserID = 0):float
+    public static function getBonus(int $UserID = 0): float
     {
         try {
             global $USER;
@@ -52,7 +53,7 @@ Class BonusTable extends Entity\DataManager
      * 
      * @return void
      */
-    public static function addBonus(float $Bonus, int $UserID = 0)
+    public static function setBonus(float $Bonus, int $UserID = 0): void
     {
         try {
             global $USER;
@@ -64,9 +65,9 @@ Class BonusTable extends Entity\DataManager
             ])->fetchAll();
 
             $HasRecord = empty($CurrentBonus) ? false : true;
+            $Bonus = ($Bonus < 0) ? 0 : $Bonus;
             if ($HasRecord) {
-                $CurrentBonus = array_shift($CurrentBonus);
-                self::update($CurrentBonus['ID'], ['BONUS' => $CurrentBonus['BONUS'] + $Bonus]);
+                self::update(array_shift($CurrentBonus)['ID'], ['BONUS' => $Bonus]);
             } else {
                 self::add(['USER_ID' => $UserID, 'BONUS' => $Bonus]);
             }
