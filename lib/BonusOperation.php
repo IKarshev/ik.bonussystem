@@ -53,7 +53,7 @@ Class BonusOperation
      */
     public function getAccrualBonusFromOrder(Sale\Order $Order): float
     {
-        return $this->getAccrualBonus( $Order->getPrice(), $Order->getId() );
+        return $this->getAccrualBonus( $Order->getPrice() - $Order->getDeliveryPrice(), $Order->getId() );
     }
 
     /**

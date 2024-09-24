@@ -32,15 +32,16 @@ Class EventHandler{
             $BonusOperation = new BonusOperation($userID);
     
             $UserBonus = BonusTable::getBonus( $userID );
-    
+            $bonusesForAccrual = $BonusOperation->getAccrualedBonusForOrder( $Order );
+
+            // TODO - Начисление бонусов исходя стоимости заказа
+
             if( $flagSale === 'Y' ){
-                // Начисление бонусов
-                $bonusesForAccrual = $BonusOperation->getAccrualBonusFromOrder( $Order );
-                BonusTable::setBonus( $UserBonus+$bonusesForAccrua, $userID);
-            }elseif ($flagSale === 'N') {
-                // Списание бонусов
-                $bonusesForAccrual = $BonusOperation->getAccrualedBonusForOrder( $Order );
+                // Оплата заказа
                 BonusTable::setBonus( $UserBonus-$bonusesForAccrual, $userID);
+            }elseif ($flagSale === 'N') {
+                // Возврат заказа
+                BonusTable::setBonus( $UserBonus+$bonusesForAccrual, $userID);
             };
         } catch (\Throwable $th) {
             throw new \Bitrix\Main\SystemException($th->getMessage());
