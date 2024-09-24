@@ -13,6 +13,12 @@ use CSaleOrderProps;
 use CSaleOrderPropsGroup;
 use Exception;
 
+/**
+ * Установка свойств заказа
+ * 
+ * @author IvanKarshev https://github.com/IKarshev
+ * @category Class
+ */
 Class OrderPropertys
 {
     private const IK_BONUS_SYSTEM = 'IK_BONUS';

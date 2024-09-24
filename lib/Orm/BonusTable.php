@@ -51,9 +51,9 @@ Class BonusTable extends Entity\DataManager
      * @param float $Bonus — бонусы
      * @param int $UserID — ID пользователя 
      * 
-     * @return void
+     * @return bool
      */
-    public static function setBonus(float $Bonus, int $UserID = 0): void
+    public static function setBonus(float $Bonus, int $UserID = 0): bool
     {
         try {
             global $USER;
@@ -71,8 +71,9 @@ Class BonusTable extends Entity\DataManager
             } else {
                 self::add(['USER_ID' => $UserID, 'BONUS' => $Bonus]);
             }
+            return true;
         } catch (\Throwable $th) {
-            throw $th;
+            return false;
         }
     }
 }

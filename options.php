@@ -1,5 +1,5 @@
 <?
-use Ik\BonusSystem\Option;
+use Ik\BonusSystem\ModuleOption;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\HttpApplication;
 use Bitrix\Main\Loader;
@@ -11,40 +11,31 @@ $request = HttpApplication::getInstance()->getContext()->getRequest();
 $module_id = htmlspecialcharsbx($request["mid"] != "" ? $request["mid"] : $request["id"]);
 Loader::includeModule($module_id);
 
+$ModuleOption = new ModuleOption();
+if ( $request->isPost() ) $ModuleOption->save_option( $_POST );
+$current_options = $ModuleOption->get_option();
 
-$Main = new IK\BonusSystem\Option();
-if ( $request->isPost() ){//save settings
-    $Main->save_option( $_POST );
-};
-$current_options = $Main->get_option();
-
+// test, checkbox, selectbox, multiselectbox, textarea, statictext
 $aTabs = array(
     array(
         "DIV" => "edit",
-        "TAB"=> Loc::getMessage("FALBAR_TOTOP_OPTIONS_TAB_NAME"),
-        "TITLE" => Loc::getMessage("FALBAR_TOTOP_OPTIONS_TAB_NAME"),
+        "TAB"=> Loc::getMessage("IK_BONUSSYSTEM_MAIN_TAB_NAME"),
+        "TITLE" => Loc::getMessage("IK_BONUSSYSTEM_MAIN_TAB_NAME"),
         "OPTIONS" => array(
             Loc::getMessage("API_SETTINGS"), // Заголовок настроек
             array( // Настройка
-                "test_api",
-                Loc::getMessage("IS_TEST_MODE"),
-                "",
-                array("checkbox")
-            ),
-            array( // Настройка
-                "extEntityId",
-                Loc::getMessage("EXTENTITYID"),
+                "ACCRUED_BONUS_PERCENTAGE",
+                Loc::getMessage("ACCRUED_BONUS_PERCENTAGE"),
                 "",
                 array("text")
             ),
-            Loc::getMessage("FALBAR_TOTOP_OPTIONS_TAB_APPEARANCE"),
         )
     ),
 );
 
 
 // формируем табы
-$aTabs = $Main->fill_params( $aTabs );
+$aTabs = $ModuleOption->fill_params( $aTabs );
 $tabControl = new CAdminTabControl(
     "tabControl",
     $aTabs
@@ -52,27 +43,19 @@ $tabControl = new CAdminTabControl(
 $tabControl->Begin();
 ?>
 
-<form id="IK_BonusSystem" action="<?=($APPLICATION->GetCurPage()); ?>?mid=<?=$module_id?>&lang=<?=LANG?>" method="post">
-
-<?
-foreach($aTabs as $aTab){
-
-    if($aTab["OPTIONS"]){
-
-        $tabControl->BeginNextTab();
-
-        __AdmSettingsDrawList($module_id, $aTab["OPTIONS"]);
+<form id="IK_BonusSystem" action="<?=$APPLICATION->GetCurPage(); ?>?mid=<?=$module_id?>&lang=<?=LANG?>" method="post">
+    <?
+    foreach($aTabs as $aTab){
+        if($aTab["OPTIONS"]){
+            $tabControl->BeginNextTab();
+            __AdmSettingsDrawList($module_id, $aTab["OPTIONS"]);
+        }
     }
-}
+    $tabControl->Buttons();
+    ?>
 
-$tabControl->Buttons();
-?>
-
-<input type="submit" name="apply_" value="<? echo(Loc::GetMessage("FALBAR_TOTOP_OPTIONS_INPUT_APPLY")); ?>" class="adm-btn-save" />
-<input type="submit" name="default" value="<? echo(Loc::GetMessage("FALBAR_TOTOP_OPTIONS_INPUT_DEFAULT")); ?>" />
-
-<?
-echo(bitrix_sessid_post());
-?>
+    <input type="submit" name="apply_" value="<?=Loc::GetMessage("FALBAR_TOTOP_OPTIONS_INPUT_APPLY"); ?>" class="adm-btn-save"/>
+    <input type="submit" name="default" value="<?=Loc::GetMessage("FALBAR_TOTOP_OPTIONS_INPUT_DEFAULT"); ?>"/>
+    <?=bitrix_sessid_post()?>
 </form>
 <?$tabControl->End();?>

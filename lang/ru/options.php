@@ -1,13 +1,9 @@
 <?php
 // разделы
-$MESS["FALBAR_TOTOP_OPTIONS_TAB_NAME"] = "Основные настройки";
-$MESS["FALBAR_TOTOP_OPTIONS_TAB_APPEARANCE"] = "Внешний вид";
-$MESS["API_SETTINGS"] = "Настройки API";
+$MESS["IK_BONUSSYSTEM_MAIN_TAB_NAME"] = "Основные настройки";
 
 // Свойства
-$MESS["IS_TEST_MODE"] = "Использовать тестовый API";
-$MESS["EXTENTITYID"] = "ID Платформы, выданный при регистрации юр. лица";
-$MESS["MERCHANTID"] = "Идентификатор зарегистрированного ТСП в СБП";
+$MESS["ACCRUED_BONUS_PERCENTAGE"] = "Процент начисляемых бонусов за оплату <br><i style='font-size:12px;'>По-умолчанию 15</i>";
 
 // кнопки
 $MESS["FALBAR_TOTOP_OPTIONS_INPUT_APPLY"]   = "Применить";

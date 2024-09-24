@@ -12,7 +12,7 @@ use Bitrix\Main\Config\Option;
  * @author IvanKarshev https://github.com/IKarshev
  * @category Class
  */
-class Option{
+class ModuleOption{
 	
 	function __construct() {
 		$this->options = new \Bitrix\Main\Config\Option();
