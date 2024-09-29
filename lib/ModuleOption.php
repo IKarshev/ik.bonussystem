@@ -13,17 +13,17 @@ use Bitrix\Main\Config\Option;
  * @category Class
  */
 class ModuleOption{
-	
-	function __construct() {
-		$this->options = new \Bitrix\Main\Config\Option();
-		$this->module_id = "ik.bonussystem";
-	}
+
+    public CONST MODULE_ID = "ik.bonussystem";
 
 	/**
 	 * Возвращает настройки
+     * @return array
 	 */
-	public function get_option(){
-		return $this->options::getForModule( $this->module_id );
+	public static function get_option(): array
+    {
+        $Option = new \Bitrix\Main\Config\Option();
+		return $Option::getForModule( self::MODULE_ID );
 	}
 
 	/**
@@ -32,25 +32,29 @@ class ModuleOption{
 	 * 	"property_code1"=>"value1",
 	 *	"property_code2"=>"value2",
 	 * );
+     * 
+     * @return void
 	 */
-	public function save_option( array $new_settings ){
-
-		$settings = array_merge($this->get_option() , $new_settings );
-
+	public static function save_option( array $new_settings ): void
+    {
+        $Option = new \Bitrix\Main\Config\Option();
+		$settings = array_merge(self::get_option(), $new_settings );
 
         foreach ($settings as $arkey => $arItem) {
-
-            // delete old
             if ( !isset($new_settings[$arkey]) ){
-                $this->options::delete( $this->module_id, array("name"=>$arkey) );
+                $Option::delete( self::MODULE_ID, array("name"=>$arkey) );
             }else{
-                $this->options::set($this->module_id, $arkey, is_array($arItem) ? implode(",", $arItem):$arItem);
+                $Option::set( self::MODULE_ID, $arkey, is_array($arItem) ? implode(",", $arItem):$arItem);
             };
-            
         };
 	}
 
-    public function fill_params( array $aTabs ){
+    /**
+     * @param array $aTabs
+     * @return array
+     */
+    public static function fill_params( array $aTabs ):array
+    {
         $new_settings = $aTabs;
 
         foreach ($aTabs as $Tabskey => $TabItem) {
@@ -61,7 +65,7 @@ class ModuleOption{
                     $option_type = $new_settings[$Tabskey]["OPTIONS"][$optionskey][3][0];
                     $option_id = $new_settings[$Tabskey]["OPTIONS"][$optionskey][0];
                 
-                    if ( !isset($this->get_option()[$option_id]) ){
+                    if ( !isset(self::get_option()[$option_id]) ){
                         switch ($option_type) {
                             case 'checkbox':
                                 $default_type_value = "N";
@@ -79,7 +83,4 @@ class ModuleOption{
 
         return $new_settings;
     }
-
-
-
 }

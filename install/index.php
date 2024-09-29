@@ -95,21 +95,37 @@ Class Ik_Bonussystem extends CModule
     {
         $this->eventManager->registerEventHandler(
             'sale',
-            'OnSalePayOrder',
+            'OnSaleOrderBeforeSaved',
             $this->MODULE_ID,
             '\\Ik\\BonusSystem\\EventHandler',
-            'OnSalePayOrderHandler'
+            'OnSaleOrderBeforeSavedHandler',
+        );
+
+        $this->eventManager->registerEventHandler(
+            'sale',
+            'OnSaleCancelOrder',
+            $this->MODULE_ID,
+            '\\Ik\\BonusSystem\\EventHandler',
+            'OnSaleCancelOrderHandler'
         );
     }
 
     function UnInstallEvents()
     {
         $this->eventManager->unRegisterEventHandler(
-            "sale",
-            "OnSalePayOrder",
+            'sale',
+            'OnSaleOrderBeforeSaved',
             $this->MODULE_ID,
             '\\Ik\\BonusSystem\\EventHandler',
-            'OnSalePayOrderHandler'
+            'OnSaleOrderBeforeSavedHandler',
+        );
+
+        $this->eventManager->unRegisterEventHandler(
+            "sale",
+            "OnSaleCancelOrder",
+            $this->MODULE_ID,
+            '\\Ik\\BonusSystem\\EventHandler',
+            'OnSaleCancelOrderHandler'
         );
     }
 

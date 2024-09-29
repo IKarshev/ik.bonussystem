@@ -11,9 +11,8 @@ $request = HttpApplication::getInstance()->getContext()->getRequest();
 $module_id = htmlspecialcharsbx($request["mid"] != "" ? $request["mid"] : $request["id"]);
 Loader::includeModule($module_id);
 
-$ModuleOption = new ModuleOption();
-if ( $request->isPost() ) $ModuleOption->save_option( $_POST );
-$current_options = $ModuleOption->get_option();
+if ( $request->isPost() ) ModuleOption::save_option( $_POST );
+$current_options = ModuleOption::get_option();
 
 // test, checkbox, selectbox, multiselectbox, textarea, statictext
 $aTabs = array(
@@ -23,19 +22,30 @@ $aTabs = array(
         "TITLE" => Loc::getMessage("IK_BONUSSYSTEM_MAIN_TAB_NAME"),
         "OPTIONS" => array(
             Loc::getMessage("API_SETTINGS"), // Заголовок настроек
-            array( // Настройка
+            array(
                 "ACCRUED_BONUS_PERCENTAGE",
                 Loc::getMessage("ACCRUED_BONUS_PERCENTAGE"),
                 "",
                 array("text")
             ),
+            array(
+                "MAXIMUM_BONUS_DEDUCTION_PERCENTAGE",
+                Loc::getMessage("MAXIMUM_BONUS_DEDUCTION_PERCENTAGE"),
+                "",
+                array("text")
+            ),
+            array(
+                "NOT_EARN_POINTS_WHEN_THEY_DEBITED",
+                Loc::getMessage("NOT_EARN_POINTS_WHEN_THEY_DEBITED"),
+                "",
+                array("checkbox")
+            ),
         )
     ),
 );
 
-
 // формируем табы
-$aTabs = $ModuleOption->fill_params( $aTabs );
+$aTabs = ModuleOption::fill_params( $aTabs );
 $tabControl = new CAdminTabControl(
     "tabControl",
     $aTabs

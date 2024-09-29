@@ -17,3 +17,13 @@
  */
 \Bitrix\Main\EventManager::getInstance()->addEventHandler('ik.bonussystem', 'onAfterAccrualBonus', ['Local\\MyClass', 'myFunction']);
 ``` 
+
+2. При расчёте максимального кол-во бонусов, которое можно списать:
+```
+/**
+ * @param Sale\Order $Order — Заказ
+ * @param int $Percent — Максимальный процент, которым можно оплатить заказ
+ * @param float &$MaximumBonusForDeducted — Максимальное кол-во бонусов, которым можно оплатить заказ
+ */
+\Bitrix\Main\EventManager::getInstance()->addEventHandler('ik.bonussystem', 'onGetMaximumBonusForDeducted', ['Local\\MyClass', 'myFunction']);
+```
